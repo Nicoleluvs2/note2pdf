@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Note2PDF AI</title>
+  <style>
+    body { font-family: sans-serif; background: #f5f5f5; padding: 1rem; }
+    textarea { width: 100%; height: 300px; padding: 0.5rem; }
+    button { padding: 0.6rem 1rem; margin-top: 0.5rem; background: #4f46e5; color: #fff; border: none; border-radius: 4px; }
+    #output { background: white; padding: 1rem; margin-top: 1rem; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h1>Note2PDF AI</h1>
+  <textarea id="note" placeholder="Paste your note here..."></textarea><br>
+  <select id="style">
+    <option value="Study Summary">Study Summary</option>
+    <option value="BCH Practical Report">BCH Practical Report</option>
+    <option value="Lecture Notes">Lecture Notes</option>
+  </select><br>
+  <button id="generate">Format</button>
+  <button id="download">Download PDF</button>
+
+  <div id="output"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
