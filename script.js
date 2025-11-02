@@ -1,22 +1,32 @@
-const noteBox = document.getElementById('note');
+const input = document.getElementById('noteInput');
+const processBtn = document.getElementById('processBtn');
 const output = document.getElementById('output');
-const styleBox = document.getElementById('style');
+const downloadBtn = document.getElementById('downloadBtn');
 
-document.getElementById('generate').addEventListener('click', async () => {
-  output.innerHTML = '⏳ Formatting... please wait.';
-  const res = await fetch('/.netlify/functions/formatNote', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      note: noteBox.value,
-      style: styleBox.value
-    })
-  });
-  const data = await res.json();
-  output.innerHTML = data.html || '❌ Error formatting note';
+processBtn.addEventListener('click', async () => {
+  const text = input.value.trim();
+  if (!text) {
+    alert('Please paste your note first!');
+    return;
+  }
+
+  output.innerHTML = "⏳ Restructuring your note... please wait.";
+
+  try {
+    const response = await fetch("/.netlify/functions/ai", {
+      method: "POST",
+      body: JSON.stringify({ text }),
+    });
+    const data = await response.json();
+
+    output.innerHTML = `<h2>Reformatted Notes</h2><p>${data.result.replace(/\n/g, '<br>')}</p>`;
+    downloadBtn.style.display = 'block';
+  } catch (err) {
+    output.innerHTML = `<p style="color:red;">Error: ${err.message}</p>`;
+  }
 });
 
-document.getElementById('download').addEventListener('click', () => {
-  if (!output.innerHTML.trim()) return alert('No content to download');
-  html2pdf().from(output).save('note2pdf.pdf');
+downloadBtn.addEventListener('click', () => {
+  const element = document.getElementById('output');
+  html2pdf().from(element).save('restructured-note.pdf');
 });
