@@ -1,34 +1,28 @@
-export async function handler(event, context) {
-  try {
-    const { text } = JSON.parse(event.body);
+import fetch from 'node-fetch';
 
-    // Call the OpenRouter API
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [
-          { role: "system", content: "You are a helpful AI that restructures class notes into well-organized, clear study notes." },
-          { role: "user", content: text }
-        ],
-      }),
-    });
+export async function handler(event) {
+  const { text } = JSON.parse(event.body);
 
-    const data = await response.json();
-    const result = data.choices?.[0]?.message?.content || "No response from AI.";
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: "openai/gpt-3.5-turbo",
+      messages: [
+        { role: "system", content: "You are an AI that restructures notes and returns clear formatted text." },
+        { role: "user", content: text }
+      ]
+    })
+  });
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ result }),
-    };
-  } catch (error) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: error.message }),
-    };
-  }
+  const data = await response.json();
+  const output = data.choices?.[0]?.message?.content || "Error: No output from AI.";
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({ result: output })
+  };
 }
